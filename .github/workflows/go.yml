@@ -18,7 +18,10 @@ jobs:
           go-version: 1.18
 
       - name: Установка зависимостей
-        run: go mod init todo-app \ go mod tidy
+        run: go mod init todo-app
+        
+      - name: Установка зависимостей
+        run: go mod tidy
 
       - name: Запуск тестов
         run: go test ./...
