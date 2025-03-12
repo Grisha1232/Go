@@ -1,5 +1,5 @@
 # Используем официальный образ Go для сборки
-FROM golang:1.18 AS builder
+FROM golang:1.24 AS builder
 
 # Устанавливаем рабочую директорию внутри контейнера
 WORKDIR /app
