@@ -37,3 +37,5 @@ jobs:
           context: .
           push: true
           tags: "todo-app:latest"
+          username: ${{ secrets.DOCKER_NAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
