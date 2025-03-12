@@ -24,6 +24,8 @@ const Tasks = () => {
         var data = await response.json();
         if (data != null) {
             setTasks(data);
+        } else {
+            setTasks([])
         }
       }
     };

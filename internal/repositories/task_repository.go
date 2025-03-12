@@ -31,7 +31,13 @@ func CreateTask(db *sql.DB, task *models.Task) error {
 }
 
 func DeleteTask(db *sql.DB, task *models.Task) error {
-	query := `DELETE FROM tasks WHERE (userd_id = $1 AND title = $2 AND deadline = $3)`
+	query := `DELETE FROM tasks 
+	WHERE id IN ( 
+			SELECT id FROM tasks 
+			WHERE 	user_id = $1 AND 
+					title = $2 AND 
+					deadline = $3 
+			LIMIT 1)`
 	_, err := db.Exec(query, task.UserID, task.Title, task.Deadline)
 	return err
 }
