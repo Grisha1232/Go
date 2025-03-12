@@ -11,25 +11,26 @@ COPY go.mod go.sum ./
 COPY . .
 
 # Компилируем бинарник для Linux
-RUN GOOS=linux GOARCH=amd64 go build -o todo-app cmd/app/main.go
+RUN GOOS=linux go build -o todo-app cmd/app/main.go
 
 # Минимальный продакшн-образ
-FROM alpine:latest
-WORKDIR /root/
+FROM alpine:latest as production
+
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+
+USER appuser
 
 # Устанавливаем зависимости (например, ca-certificates)
 RUN apk --no-cache add ca-certificates
 
 # Копируем скомпилированное приложение
-COPY --from=builder /app/todo-app .
+COPY --from=build /app/todo-app ./
 
 # Делаем бинарник исполняемым
 RUN chmod +x ./todo-app
 
 # Открываем порт 8080
 EXPOSE 8080
-
-RUN ls
 
 # Запускаем приложение
 CMD ["./todo-app"]
