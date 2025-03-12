@@ -30,12 +30,8 @@ jobs:
           username: ${{ secrets.DOCKER_NAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-
-      - name: Сборка и Пуш Docker-образа
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          push: true
-          tags: "todo-app:latest"
-          username: ${{ secrets.DOCKER_NAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Build Docker image
+        run: docker build -t greagua1232/todo-app:latest .
+  
+      - name: Push Docker image to Docker Hub
+        run: docker push gregua1232/todo-app:latest
