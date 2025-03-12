@@ -36,6 +36,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: "greagua1232/todo-app:latest"
-          username: ${{ secrets.DOCKER_NAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+          tags: "${{ secrets.DOCKER_NAME }}/todo-app:latest"
