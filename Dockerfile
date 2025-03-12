@@ -22,9 +22,8 @@ USER appuser
 
 # Копируем скомпилированное приложение
 COPY --from=build /app/todo-app ./
-
-# Копируем файл конфигурации
 COPY --from=build /app/config ./config
+COPY --from=build /app/internal/ ./internal
 
 # Открываем порт 8080
 EXPOSE 8080
