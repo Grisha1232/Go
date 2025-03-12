@@ -18,9 +18,6 @@ jobs:
           go-version: 1.24
 
       - name: Установка зависимостей
-        run: go mod init todo-app
-
-      - name: Установка зависимостей
         run: go mod tidy
 
       - name: Запуск тестов
