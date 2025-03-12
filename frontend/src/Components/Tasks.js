@@ -3,7 +3,7 @@ import { Container, TextField, Button, Table, TableHead, TableRow, TableCell, Ta
 import DeleteIcon from "@mui/icons-material/Delete"; 
 import Navbar from "../Components/Navbar";
 
-const API_URL = "http://localhost:8080";
+const API_URL = "http://localhost:30080";
 
 const Tasks = () => {
     const [tasks, setTasks] = useState([]);
