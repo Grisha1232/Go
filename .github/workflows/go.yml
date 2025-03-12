@@ -1,4 +1,4 @@
-name: Go CI/CD
+name: Docker CI/CD
 
 on:
   push:
@@ -8,8 +8,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout кода
+      - name: Checkout репозитория
         uses: actions/checkout@v3
 
       - name: Установка Go
@@ -23,10 +24,11 @@ jobs:
       - name: Запуск тестов
         run: go test ./...
 
-      - name: Сборка Docker-образа
-        run: docker build -t your-dockerhub/todo-app .
+      - name: Логин в DockerHub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
-      - name: Деплой в DockerHub
-        run: |
-          echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-          docker push your-dockerhub/todo-app
+      - name: Сборка Docker-образа
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/todo-app:latest .
+
+      - name: Пуш Docker-образа в DockerHub
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/todo-app:latest
