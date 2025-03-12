@@ -24,14 +24,18 @@ jobs:
       - name: Запуск тестов
         run: go test ./...
 
-      - name: Логин в DockerHub
-        env:
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-        run: echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
+      # - name: Логин в DockerHub
+      #   env:
+      #     DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      #     DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      #   run: echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
       
-      - name: Сборка Docker-образа
-        run: docker build -t gregua1232/todo-app:latest .
+      - name: Сборка и Пуш Docker-образа
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: "gregua1232:latest"
+          username: "gregua1232"
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Пуш Docker-образа в DockerHub
-        run: docker push gregua1232/todo-app:latest
