@@ -29,7 +29,7 @@ spec:
           image: postgres:latest
           env:
             - name: POSTGRES_USER
-              value: "postgres"
+              value: "user"
             - name: POSTGRES_PASSWORD
               value: "password"
             - name: POSTGRES_DB
