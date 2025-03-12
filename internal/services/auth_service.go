@@ -3,6 +3,7 @@ package services
 import (
 	"database/sql"
 	"errors"
+	"strings"
 	"time"
 	"todo-app/internal/repositories"
 
@@ -62,4 +63,34 @@ func ValidateToken(tokenString string) (int, error) {
 	}
 
 	return claims.UserID, nil
+}
+
+// RegisterUser создает нового пользователя
+func RegisterUser(db *sql.DB, username, password string) error {
+	// Проверяем, существует ли пользователь
+	var exists bool
+	err := db.QueryRow("SELECT EXISTS (SELECT 1 FROM users WHERE username=$1)", username).Scan(&exists)
+	if err != nil {
+		return errors.New("ошибка проверки пользователя")
+	}
+	if exists {
+		return errors.New("пользователь уже существует")
+	}
+
+	// Хэшируем пароль
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		return errors.New("ошибка хеширования пароля")
+	}
+
+	// Записываем пользователя в БД
+	_, err = db.Exec("INSERT INTO users (username, password_hash) VALUES ($1, $2)", username, hashedPassword)
+	if err != nil {
+		if strings.Contains(err.Error(), "duplicate key") {
+			return errors.New("пользователь уже существует")
+		}
+		return errors.New("ошибка при создании пользователя")
+	}
+
+	return nil
 }

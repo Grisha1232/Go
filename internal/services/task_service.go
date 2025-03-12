@@ -29,3 +29,16 @@ func AddUserTask(db *sql.DB, task *models.Task) error {
 
 	return nil
 }
+
+func DeleteUserTask(db *sql.DB, task *models.Task) error {
+	if task.Title == "" || task.Deadline.IsZero() {
+		return errors.New("название и дедлайн обязательны")
+	}
+
+	err := repositories.DeleteTask(db, task)
+	if err != nil {
+		return errors.New("ошибка удаления задачи")
+	}
+
+	return nil
+}

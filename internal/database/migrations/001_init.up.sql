@@ -8,7 +8,7 @@ CREATE TABLE tasks (
     id SERIAL PRIMARY KEY,
     user_id INT REFERENCES users(id),
     title VARCHAR(255) NOT NULL,
-    description TEXT,
+    description VARCHAR(255),
     deadline TIMESTAMP NOT NULL,
-    completed BOOLEAN DEFAULT FALSE
+    completed BOOLEAN
 );

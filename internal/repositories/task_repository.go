@@ -6,7 +6,7 @@ import (
 )
 
 func GetTasksByUserID(db *sql.DB, userID int) ([]models.Task, error) {
-	rows, err := db.Query("SELECT id, title, description, deadline, completed FROM tasks WHERE user_id=$1", userID)
+	rows, err := db.Query("SELECT id, user_id, title, deadline FROM tasks WHERE user_id=$1", userID)
 	if err != nil {
 		return nil, err
 	}
@@ -15,7 +15,7 @@ func GetTasksByUserID(db *sql.DB, userID int) ([]models.Task, error) {
 	var tasks []models.Task
 	for rows.Next() {
 		var task models.Task
-		if err := rows.Scan(&task.ID, &task.Title, &task.Description, &task.Deadline, &task.Completed); err != nil {
+		if err := rows.Scan(&task.ID, &task.UserID, &task.Title, &task.Deadline); err != nil {
 			return nil, err
 		}
 		tasks = append(tasks, task)
@@ -23,8 +23,15 @@ func GetTasksByUserID(db *sql.DB, userID int) ([]models.Task, error) {
 	return tasks, nil
 }
 
+// CreateTask создает новую задачу в БД
 func CreateTask(db *sql.DB, task *models.Task) error {
-	_, err := db.Exec("INSERT INTO tasks (user_id, title, description, deadline, completed) VALUES ($1, $2, $3, $4, $5)",
-		task.UserID, task.Title, task.Description, task.Deadline, task.Completed)
+	query := `INSERT INTO tasks (user_id, title, deadline) VALUES ($1, $2, $3)`
+	_, err := db.Exec(query, task.UserID, task.Title, task.Deadline)
+	return err
+}
+
+func DeleteTask(db *sql.DB, task *models.Task) error {
+	query := `DELETE FROM tasks WHERE (userd_id = $1 AND title = $2 AND deadline = $3)`
+	_, err := db.Exec(query, task.UserID, task.Title, task.Deadline)
 	return err
 }
