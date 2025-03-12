@@ -28,5 +28,7 @@ COPY --from=builder /app/todo-app .
 # Открываем порт 8080
 EXPOSE 8080
 
+RUN ls
+
 # Запускаем приложение
 CMD ["./todo-app"]
