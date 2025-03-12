@@ -31,7 +31,7 @@ jobs:
         run: echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
       
       - name: Сборка Docker-образа
-        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/todo-app:latest .
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/todo-app .
 
       - name: Пуш Docker-образа в DockerHub
         run: docker push ${{ secrets.DOCKER_USERNAME }}/todo-app:latest
