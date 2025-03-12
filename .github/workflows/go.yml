@@ -33,7 +33,7 @@ jobs:
       - name: Сборка Docker-образа
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-        run: docker build -t $DOCKER_USERNAME/todo-app .
+        run: docker build -t $DOCKER_USERNAME/todo-app:latest .
 
       - name: Пуш Docker-образа в DockerHub
         run: docker push ${{ secrets.DOCKER_USERNAME }}/todo-app:latest
