@@ -32,4 +32,4 @@ EXPOSE 8080
 RUN ls
 
 # Запускаем приложение
-CMD ["./todo-app"]
+CMD ["./root/todo-app"]
