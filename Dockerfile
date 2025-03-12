@@ -4,8 +4,6 @@ FROM golang:1.24 AS builder
 # Устанавливаем рабочую директорию внутри контейнера
 WORKDIR /app
 
-RUN go mod tidy
-
 # Копируем Go-модули и загружаем зависимости
 COPY go.mod go.sum ./
 
