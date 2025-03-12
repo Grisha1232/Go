@@ -15,11 +15,11 @@ jobs:
       - name: Установка Go
         uses: actions/setup-go@v3
         with:
-          go-version: 1.18
+          go-version: 1.24
 
       - name: Установка зависимостей
         run: go mod init todo-app
-        
+
       - name: Установка зависимостей
         run: go mod tidy
 
