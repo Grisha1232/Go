@@ -12,9 +12,44 @@ import (
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
+// Метрики Prometheus
+var (
+	requestsTotal = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Name: "http_requests_total",
+			Help: "Общее количество HTTP-запросов",
+		},
+		[]string{"method", "path"},
+	)
+
+	requestDuration = prometheus.NewHistogramVec(
+		prometheus.HistogramOpts{
+			Name:    "http_request_duration_seconds",
+			Help:    "Длительность HTTP-запросов",
+			Buckets: prometheus.DefBuckets,
+		},
+		[]string{"method", "path"},
+	)
+)
+
+// Middleware для сбора метрик
+func MetricsMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		timer := prometheus.NewTimer(requestDuration.WithLabelValues(r.Method, r.URL.Path))
+		defer timer.ObserveDuration()
+		requestsTotal.WithLabelValues(r.Method, r.URL.Path).Inc()
+		next.ServeHTTP(w, r)
+	})
+}
+
 func main() {
+	// Регистрация метрик
+	prometheus.MustRegister(requestsTotal, requestDuration)
+
 	// Загружаем конфигурацию
 	cfg, err := config.LoadConfig()
 	if err != nil {
@@ -46,6 +81,7 @@ func main() {
 	// Логирование запросов
 	r.Use(middleware.LoggingMiddleware)
 	r.Use(middleware.ErrorLoggingMiddleware)
+	r.Use(MetricsMiddleware) // Подключаем метрики
 
 	// ✅ Добавляем обработчик OPTIONS-запросов (preflight CORS)
 	r.Methods("OPTIONS").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -62,6 +98,9 @@ func main() {
 	r.HandleFunc("/tasks", middleware.AuthMiddleware(own_handlers.GetTasksHandler(db))).Methods("GET", "OPTIONS")
 	r.HandleFunc("/tasks", middleware.AuthMiddleware(own_handlers.CreateTaskHandler(db))).Methods("POST", "OPTIONS")
 	r.HandleFunc("/tasks", middleware.AuthMiddleware(own_handlers.DeleteTaskHandler(db))).Methods("DELETE", "OPTIONS")
+
+	// Эндпоинт для Prometheus-метрик
+	r.Handle("/metrics", promhttp.Handler())
 
 	// Запуск сервера
 	addr := fmt.Sprintf(":%d", cfg.Server.Port)
